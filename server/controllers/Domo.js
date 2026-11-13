@@ -48,10 +48,12 @@ const getDomos = async (req, res) => {
 // Removes a domo by a provided ID
 const removeDomo = async (req, res) => {
     const id = req.body.id;
-
-    Domo.findByIdAndDelete(id)
-        .then(() => res.json({}))
-        .catch(err => res.status(400).json({ error: 'Could not delete Domo' }));
+    try {
+        await Domo.findByIdAndDelete(id).then(() => res.json({}))
+    } catch(err){
+        console.log(err);
+        return res.status(400).json({error: 'Could not delete Domo.'});
+    }
 };
 
 module.exports = {
