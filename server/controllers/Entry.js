@@ -1,5 +1,5 @@
 const models = require('../models');
-const Domo = models.Domo;
+const Entry = models.Entry;
 
 const makerPage = async (req, res) => {
     return res.render('app');
