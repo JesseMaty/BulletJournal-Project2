@@ -55,19 +55,6 @@ redisClient.connect().then(() => {
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
 
-    // This will add a session object to every request object
-    // It can later be accessed with "req.session"
-    // The sesion object can be used to track and store information unique to
-    // that user between requests.
-    app.use(session({
-        key: 'sessionid', // Name of your cookie to be tracked in requests
-        store: new RedisStore({
-            client: redisClient,
-        }),
-        secret: 'Domo Arigato', // Private string used as a seed for hashing/creating unique session keys
-        resave: false,  // Tells session lib to only send session key to db on changes
-        saveUninitialized: false,   // Prevents us from saving uninitialized sessionids to db
-    }));
 
     app.engine('handlebars', expressHandlebars.engine({ defaultLayout: '' }));
     app.set('view engine', 'handlebars');

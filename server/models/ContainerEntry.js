@@ -66,10 +66,6 @@ const ContainerSchema = new mongoose.Schema({
         uppercase: true,
         validate: [colorValidator, 'Invalid color'],
     },
-    entries : [{
-        type: mongoose.Schema.ObjectId,
-        ref: 'Entry',
-    }],
     owner: {
         type: mongoose.Schema.ObjectId,
         required: true,
@@ -90,7 +86,6 @@ EntrySchema.statics.toAPI = (doc) => ({
 ContainerSchema.statics.toAPI = (doc) => ({
     name: doc.name,
     color:  doc.color,
-    entries: doc.entries,
 });
 
 const EntryModel = mongoose.model('Entry', EntrySchema);

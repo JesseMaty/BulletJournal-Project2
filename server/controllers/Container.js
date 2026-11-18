@@ -1,64 +1,95 @@
 const models = require('../models');
 const Container = models.Container;
+const Entry = models.Entry;
 
 const makerPage = async (req, res) => {
     return res.render('app');
 }
 
-const makeDomo = async (req, res) => {
-    if (!req.body.name || !req.body.age || !req.body.peopleEaten) {
-        return res.status(400).json({ error: 'Name, age, and people eaten are required!' });
+const makeContainer = async (req, res) => {
+    if (!req.body.name || !req.body.color) {
+        return res.status(400).json({ error: 'Name and color are both required!' });
     }
 
-    const domoData = {
+    const containerData = {
         name: req.body.name,
-        age: req.body.age,
-        peopleEaten: req.body.peopleEaten,
+        color: req.body.color,
         owner: req.session.account._id,
     };
 
     try {
-        const newDomo = new Domo(domoData);
-        await newDomo.save();
+        const newContainer = new Container(entryData);
+        await newContainer.save();
         return res.status(201).json({
-            name: newDomo.name, age: newDomo.age,
-            peopleEaten: newDomo.peopleEaten
-        }); // Domo successfully created 
+            name: containerData.name,
+            color: containerData.color,
+            owner: containerData.owner,
+        }); // Container successfully created 
     } catch (err) {
         console.log(err);
         if (err.code === 110000) {
-            return res.status(400).json({ error: 'Domo already exists!' });
+            return res.status(400).json({ error: 'Container already exists!' });
         }
-        return res.status(500).json({ error: "An error occured making the domo!" });
+        return res.status(500).json({ error: "An error occured making the container!" });
     }
 }
 
-const getDomos = async (req, res) => {
+const getContainers = async (req, res) => {
     try {
         const query = { owner: req.session.account._id };
-        const docs = await Domo.find(query).select('name age peopleEaten').lean().exec();
+        const docs = await Container.find(query).select('').lean().exec();
 
-        return res.json({ domos: docs });
+        return res.json({ containers: docs });
     } catch (err) {
         console.log(err);
-        return res.status(500).json({ error: 'Error retrieving domos!' });
+        return res.status(500).json({ error: 'Error retrieving containers!' });
     }
 }
 
-// Removes a domo by a provided ID
-const removeDomo = async (req, res) => {
-    const id = req.body.id;
+const updateContainerName = async (req, res) => {
+    // Make sure new name is filled out
+    if (!req.body.id || !req.body.name) {
+        return res.status(400).json({ error: 'Container id and name required!' });
+    }
+
     try {
-        await Domo.findByIdAndDelete(id).then(() => res.json({}))
-    } catch(err){
+        await Entry.update({ id: req.body.id, name: req.body.name });
+        return res.status(204).json({ id: 'Successfully updated Container content' });
+    } catch (err) {
+        return res.status(500).json({ error: 'Error updating Container content' });
+    }
+}
+
+
+// Removes a container, AND it's child entries
+const removeContainer = async (req, res) => {
+    const id = req.body.id; // Id of the container to remove
+    try {
+        await Container.findByIdAndDelete(id);
+
+        try {
+            const query = { owner: req.session.account._id, parentContainer: id };
+            const entries = await Entry.find(query).select('').lean().exec();
+
+            entries.forEach(entry => {
+                entries.findByIdAndDelete(entry._id);
+            });
+        } catch (err) {
+            console.log(err);
+            return response.status(500).json({ error: 'Could not delete the Container\'s Entries' });
+        }
+
+        return res.status(204).json({ id: "Successfully deleted Container and it's children" });
+    } catch (err) {
         console.log(err);
-        return res.status(400).json({error: 'Could not delete Domo.'});
+        return res.status(500).json({ error: 'Could not delete Container.' });
     }
 };
 
 module.exports = {
     makerPage,
-    makeDomo,
-    getDomos,
-    removeDomo,
+    makeContainer,
+    getContainers,
+    updateContainerName,
+    removeContainer,
 };

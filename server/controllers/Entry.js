@@ -5,60 +5,94 @@ const makerPage = async (req, res) => {
     return res.render('app');
 }
 
-const makeDomo = async (req, res) => {
-    if (!req.body.name || !req.body.age || !req.body.peopleEaten) {
-        return res.status(400).json({ error: 'Name, age, and people eaten are required!' });
+const makeEntry = async (req, res) => {
+    if (!req.body.type || !req.body.content || !req.body.color || !req.body.parentContainer) {
+        return res.status(400).json({ error: 'Type, content, color, and parent are all required!' });
     }
 
-    const domoData = {
-        name: req.body.name,
-        age: req.body.age,
-        peopleEaten: req.body.peopleEaten,
+    const entryData = {
+        type: req.body.type,
+        content: req.body.content,
+        color: req.body.color,
+        parentContainer: req.body.parentContainer,
         owner: req.session.account._id,
     };
 
     try {
-        const newDomo = new Domo(domoData);
-        await newDomo.save();
+        const newEntry = new Entry(entryData);
+        await newEntry.save();
         return res.status(201).json({
-            name: newDomo.name, age: newDomo.age,
-            peopleEaten: newDomo.peopleEaten
-        }); // Domo successfully created 
+            type: newEntry.type, content: newEntry.content,
+            color: newEntry.color, parentContainer: newEntry.parentContainer,
+        }); // Entry successfully created 
     } catch (err) {
         console.log(err);
         if (err.code === 110000) {
-            return res.status(400).json({ error: 'Domo already exists!' });
+            return res.status(400).json({ error: 'Entry already exists!' });
         }
-        return res.status(500).json({ error: "An error occured making the domo!" });
+        return res.status(500).json({ error: "An error occured making the entry!" });
     }
 }
 
-const getDomos = async (req, res) => {
+const getEntries = async (req, res) => {
     try {
-        const query = { owner: req.session.account._id };
-        const docs = await Domo.find(query).select('name age peopleEaten').lean().exec();
+        const query = { owner: req.session.account._id, parentContainer: req.body.parentContainer };
+        const docs = await Entry.find(query).select('').lean().exec();
 
-        return res.json({ domos: docs });
+        return res.json({ entries: docs });
     } catch (err) {
         console.log(err);
-        return res.status(500).json({ error: 'Error retrieving domos!' });
+        return res.status(500).json({ error: 'Error retrieving entries!' });
     }
 }
 
-// Removes a domo by a provided ID
-const removeDomo = async (req, res) => {
+const updateEntryContent = async (req, res) => {
+    // Make sure new content is filled out
+    if (!req.body.id || !req.body.content) {
+        return res.status(400).json({ error: 'Entry id and content required!' });
+    }
+
+    try {
+        await Entry.update({ id: req.body.id, content: req.body.content });
+        return res.status(204).json({ id: 'Successfully updated Entry content' });
+    } catch (err) {
+        return res.status(500).json({ error: 'Error updating entry content' });
+    }
+}
+
+// Moves an entry to a new parent container
+const moveEntry = async (req, res) => {
+    const entryId = req.body.id;
+    const containerId = req.body.parentContainer;
+
+    try {
+        const query = { id: entryId }
+        await Entry.update(query, { parentContainer: containerId })
+
+        return res.status(204).json({ id: 'Successfully moved Entry!' });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'Could not move Entry' });
+    }
+}
+
+// Removes an entry by a provided ID
+const removeEntry = async (req, res) => {
     const id = req.body.id;
     try {
-        await Domo.findByIdAndDelete(id).then(() => res.json({}))
-    } catch(err){
+        await Entry.findByIdAndDelete(id);
+        return res.status(204).json({ id: "Successfully deleted entry" });
+    } catch (err) {
         console.log(err);
-        return res.status(400).json({error: 'Could not delete Domo.'});
+        return res.status(500).json({ error: 'Could not delete Entry.' });
     }
 };
 
 module.exports = {
     makerPage,
-    makeDomo,
-    getDomos,
-    removeDomo,
+    makeEntry,
+    getEntries,
+    updateEntryContent,
+    moveEntry,
+    removeEntry,
 };
