@@ -3,8 +3,10 @@ const mid = require('./middleware');
 
 // Connect our routes
 const router = (app) => {
-    // app.get('/getDomos', mid.requiresLogin, controllers.Domo.getDomos);
-    // app.post('/removeDomo', mid.requiresLogin, controllers.Domo.removeDomo);
+    app.get('/getEntries', mid.requiresLogin, controllers.Entry.getEntries);
+    app.post('/removeEntry', mid.requiresLogin, controllers.Entry.removeEntry);
+    app.post('/makeEntry', mid.requiresLogin, controllers.Entry.makeEntry);
+    app.post('/updateEntryContent', mid.requiresLogin, controllers.Entry.updateEntryContent);
 
     app.get('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
     app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
@@ -13,8 +15,8 @@ const router = (app) => {
 
     app.get('/logout', mid.requiresLogin, controllers.Account.logout);
 
-    // app.get('/maker', mid.requiresLogin, controllers.Domo.makerPage);
-    // app.post('/maker', mid.requiresLogin, controllers.Domo.makeDomo);
+    app.get('/maker', mid.requiresLogin, controllers.Entry.makerPage);
+    app.post('/maker', mid.requiresLogin, controllers.Entry.makerPage);
 
     app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };

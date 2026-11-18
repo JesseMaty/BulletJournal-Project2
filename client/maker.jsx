@@ -3,91 +3,142 @@ const React = require('react');
 const { useState, useEffect } = React;
 const { createRoot } = require("react-dom/client");
 
-const handleDomo = (e, onDomoAdded) => {
+const handleEntry = (e, onEntryAdded) => {
     e.preventDefault();
     helper.hideError();
 
-    const name = e.target.querySelector('#domoName').value;
-    const age = e.target.querySelector('#domoAge').value;
-    const peopleEaten = e.target.querySelector('#domoPeopleEaten').value;
+    const type = e.target.querySelector('#entryType').value;
+    const content = e.target.querySelector('#entryContent').value;
+    const color = e.target.querySelector('#entryColor').value;
+    const parentContainer = e.target.querySelector('#entryParentContainer') ? e.target.querySelector('#entryParentContainer').value : 'inbox';
 
-    if (!name || !age || !peopleEaten) {
+    if (!type || !content || !color) {
         helper.handleError('All fields are required!');
         return false;
     }
 
-    helper.sendPost(e.target.action, { name, age, peopleEaten }, onDomoAdded);
+    helper.sendPost(e.target.action, { type, content, color, parentContainer }, onEntryAdded);
     return false;
 };
-
-// Handles the deletion of a domo based on its id
-const handleDelete = (id, onDomoRemoved) => {
+const handleContainer = (e, onContainerAdded) => {
+    e.preventDefault();
     helper.hideError();
 
-    helper.sendPost('/removeDomo', {id}, onDomoRemoved);
+    const name = e.target.querySelector('#containerName').value;
+    const color = e.target.querySelector('#containerColor').value;
+
+    if (!name || !color) {
+        helper.handleError('All fields are required!');
+        return false;
+    }
+
+    helper.sendPost(e.target.action, { name, color}, onContainerAdded);
+    return false;
+};
+// Handles the deletion of an entry based on its id
+const handleDeleteEntry = (id, onEntryRemoved) => {
+    helper.hideError();
+
+    helper.sendPost('/removeEntry', { id }, onEntryRemoved);
+    return false;
+}
+
+// Handles the deletion of an entry based on its id
+const handleDeleteContainer = (id, onContainerRemoved) => {
+    helper.hideError();
+
+    helper.sendPost('/removeContainer', { id }, onContainerRemoved);
+    return false;
 }
 
 // ----- REACT COMPONENTS -----
 
-// Form to make a domo
-const DomoForm = (props) => {
+const ContainerForm = (props) => {
     return (
-        <form id='domoForm'
-            onSubmit={(e) => handleDomo(e, props.triggerReload)}
-            name="domoForm"
-            action="/maker"
+        <form id='containerForm'
+            onSubmit={(e) => handleContainer(e, props.triggerReload)}
+            name="containerForm"
+            action="/makeContainer"
             method="POST"
-            className="domoForm"
+            className="containerForm"
         >
-            <label htmlFor="domoName">Name: </label>
-            <input id="domoName" type="text" name="name" placeholder="Domo Name" />
-            <label htmlFor="domoAge">Age: </label>
-            <input id="domoAge" type="number" name="age" />
-            <label htmlFor="domoPeopleEaten">People Eaten: </label>
-            <input id="domoPeopleEaten" type="number" name="peopleEaten" />
-            <input className="makeDomoSubmit" type="submit" value="Make Domo" />
+            <input id="containerName" type="text" name="containerName" placeholder="Enter container name" />
+            <label htmlFor="containerColor">Color: </label>
+            <input id="containerColor" type="color" name="containerColor" defaultValue="#4bbf5c" />
+            <input className="makeContainerSubmit" type="submit" value="Create Container" />
+        </form>
+    )
+}
+
+// Form to make an entry
+const EntryForm = (props) => {
+    return (
+        <form id='entryForm'
+            onSubmit={(e) => handleEntry(e, props.triggerReload)}
+            name="entryForm"
+            action="/makeEntry"
+            method="POST"
+            className="entryForm"
+        >
+            <label htmlFor="entryType">Type: </label>
+            <select name="entryTypes" id="entryType">
+                <option value="task">Task</option>
+                <option value="event">Event</option>
+                <option value="note">Note</option>
+            </select>
+            <input id="entryContent" type="text" name="entryContent" placeholder="Enter entry description" />
+            <label htmlFor="entryColor">Color: </label>
+            <input id="entryColor" type="color" name="entryColor" defaultValue="#4bbfa6" />
+            <input className="makeEntrySubmit" type="submit" value="Create Entry" />
         </form>
     )
 };
 
-// Component to display list of Domos
-// Domos are stored in array using useState hook: allowing updating/rerendering
-// An effect loads domos from server and updates state
-// useEffect hook has props.reloadDomos as dependency
-const DomoList = (props) => {
-    const [domos, setDomos] = useState(props.domos);
+const ContainerList = (props) => {
+    return(
+        <div className="container">
+            <EntryList props></EntryList>
+        </div>
+    )
+}
+
+// Component to display list of Entries
+// Entries are stored in array using useState hook: allowing updating/rerendering
+// An effect loads entries from server and updates state
+// useEffect hook has props.reloadEntries as dependency
+const EntryList = (props) => {
+    const [entries, setEntries] = useState(props.entries);
 
     useEffect(() => {
-        const loadDomosFromServer = async () => {
-            const response = await fetch('/getDomos');
+        const loadEntriesFromServer = async () => {
+            const response = await fetch('/getEntries');
             const data = await response.json();
-            setDomos(data.domos);
+            setEntries(data.entries);
         };
-        loadDomosFromServer();
-    }, [props.reloadDomos]);
+        loadEntriesFromServer();
+    }, [props.reloadEntries]);
 
-    if (domos.length === 0) {
+    if (entries.length === 0) {
         return (
-            <div className="domoList">
-                <h3 className="emptyDomo">No Domos Yet!</h3>
+            <div className="entryList">
+                <h3 className="emptyEntry">No Entries Yet!</h3>
             </div>
         );
     };
 
-    const domoNodes = domos.map(domo => {
+    const entryNodes = entries.map(entry => {
         return (
-            <div key={domo.id} className="domo">
+            <div key={entry._id} className="entry" style={{backgroundColor :entry.color}}>
 
                 <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
-                <h3 className="domoName">Name: {domo.name}</h3>
-                <h3 className="domoAge">Age: {domo.age}</h3>
-                <h3 className="domoPeopleEaten">People Eaten: {domo.peopleEaten}</h3>
+                <h3 className="entryType">{entry.type}: </h3>
+                <h3 className="entryContent">{entry.content}</h3>
 
                 <button
-                    className="removeDomoSubmit"
-                    onClick={() => handleDelete(domo._id, props.triggerReload)}
+                    className="removeEntrySubmit"
+                    onClick={() => handleDeleteEntry(entry._id, props.triggerReload)}
                 >
-                    Remove Domo
+                    Remove Entry
                 </button>
 
             </div>
@@ -95,33 +146,33 @@ const DomoList = (props) => {
     });
 
     return (
-        <div className='domoList'>
-            {domoNodes}
+        <div className='entryList'>
+            {entryNodes}
         </div>
     );
 };
 
 const App = () => {
-    // Create stateful variable reloadDomos
-    const [reloadDomos, setReloadDomos] = useState(false); // Boolean
+    // Create stateful variable reloadEntries
+    const [reloadEntries, setReloadEntries] = useState(false); // Boolean
 
     return (
         <div>
-            <div id="makeDomo">
-                {/* When rendering domoForm, create triggerRelaod prop.
-                Function calls setReloadDomos, and passes in negation of
-                reload domos into the domoList */}
-                <DomoForm triggerReload={() => setReloadDomos(!reloadDomos)} />
+            <div id="makeEntry">
+                {/* When rendering entryForm, create triggerReload prop.
+                Function calls setReloadEntry, and passes in negation of
+                reload entries into the entryList */}
+                <EntryForm triggerReload={() => setReloadEntries(!reloadEntries)} />
             </div>
-            <div id="domos">
-                <DomoList domos={[]} reloadDomos={reloadDomos} triggerReload={() => setReloadDomos(!reloadDomos)}/>
+            <div id="entries">
+                <EntryList entries={[]} reloadEntries={reloadEntries} triggerReload={() => setReloadEntries(!reloadEntries)} />
             </div>
         </div>
     );
 };
 
 const init = () => {
-    const root = createRoot(document.getElementById('app'));
+    const root = createRoot(document.getElementById('content'));
     root.render(<App />);
 };
 

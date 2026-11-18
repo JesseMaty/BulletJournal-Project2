@@ -3,7 +3,7 @@ const Container = models.Container;
 const Entry = models.Entry;
 
 const makerPage = async (req, res) => {
-    return res.render('app');
+    return res.render('container');
 }
 
 const makeContainer = async (req, res) => {
@@ -18,7 +18,7 @@ const makeContainer = async (req, res) => {
     };
 
     try {
-        const newContainer = new Container(entryData);
+        const newContainer = new Container(containerData);
         await newContainer.save();
         return res.status(201).json({
             name: containerData.name,
@@ -27,7 +27,7 @@ const makeContainer = async (req, res) => {
         }); // Container successfully created 
     } catch (err) {
         console.log(err);
-        if (err.code === 110000) {
+        if (err.code === 11000) {
             return res.status(400).json({ error: 'Container already exists!' });
         }
         return res.status(500).json({ error: "An error occured making the container!" });
@@ -56,6 +56,7 @@ const updateContainerName = async (req, res) => {
         await Entry.update({ id: req.body.id, name: req.body.name });
         return res.status(204).json({ id: 'Successfully updated Container content' });
     } catch (err) {
+        console.log(err);
         return res.status(500).json({ error: 'Error updating Container content' });
     }
 }
@@ -76,7 +77,7 @@ const removeContainer = async (req, res) => {
             });
         } catch (err) {
             console.log(err);
-            return response.status(500).json({ error: 'Could not delete the Container\'s Entries' });
+            return res.status(500).json({ error: 'Could not delete the Container\'s Entries' });
         }
 
         return res.status(204).json({ id: "Successfully deleted Container and it's children" });

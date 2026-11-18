@@ -2,11 +2,11 @@ const models = require('../models');
 const Entry = models.Entry;
 
 const makerPage = async (req, res) => {
-    return res.render('app');
+    return res.render('container');
 }
 
 const makeEntry = async (req, res) => {
-    if (!req.body.type || !req.body.content || !req.body.color || !req.body.parentContainer) {
+    if (!req.body.type || !req.body.content || !req.body.color) {
         return res.status(400).json({ error: 'Type, content, color, and parent are all required!' });
     }
 
@@ -14,7 +14,7 @@ const makeEntry = async (req, res) => {
         type: req.body.type,
         content: req.body.content,
         color: req.body.color,
-        parentContainer: req.body.parentContainer,
+        parentContainer: req.session.account._id,
         owner: req.session.account._id,
     };
 
@@ -27,7 +27,7 @@ const makeEntry = async (req, res) => {
         }); // Entry successfully created 
     } catch (err) {
         console.log(err);
-        if (err.code === 110000) {
+        if (err.code === 11000) {
             return res.status(400).json({ error: 'Entry already exists!' });
         }
         return res.status(500).json({ error: "An error occured making the entry!" });
@@ -36,7 +36,13 @@ const makeEntry = async (req, res) => {
 
 const getEntries = async (req, res) => {
     try {
-        const query = { owner: req.session.account._id, parentContainer: req.body.parentContainer };
+        const query = { owner: req.session.account._id };
+
+        // If a parent container is provided, filter through that
+        // Otherwise get all entries owned by account
+        //if (req.query.parentContainer) 
+        //    {query.parentContainer = req.query.parentContainer;}
+
         const docs = await Entry.find(query).select('').lean().exec();
 
         return res.json({ entries: docs });
@@ -54,8 +60,9 @@ const updateEntryContent = async (req, res) => {
 
     try {
         await Entry.update({ id: req.body.id, content: req.body.content });
-        return res.status(204).json({ id: 'Successfully updated Entry content' });
+        return res.status(204);
     } catch (err) {
+        console.log(err);
         return res.status(500).json({ error: 'Error updating entry content' });
     }
 }
@@ -69,7 +76,7 @@ const moveEntry = async (req, res) => {
         const query = { id: entryId }
         await Entry.update(query, { parentContainer: containerId })
 
-        return res.status(204).json({ id: 'Successfully moved Entry!' });
+        return res.status(200).json({message: 'Successfully Moved Entry'});
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: 'Could not move Entry' });
@@ -81,7 +88,7 @@ const removeEntry = async (req, res) => {
     const id = req.body.id;
     try {
         await Entry.findByIdAndDelete(id);
-        return res.status(204).json({ id: "Successfully deleted entry" });
+        return res.status(200).json({message: 'Successfully Removed Entry'});;
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: 'Could not delete Entry.' });

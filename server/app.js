@@ -15,7 +15,7 @@ const router = require('./router.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const dbURI = process.env.MONGODB_URI || 'mongodb://localhost/DomoMaker';
+const dbURI = process.env.MONGODB_URI || 'mongodb://localhost/BulletJournal';
 mongoose.connect(dbURI).catch((err) => {
     if (err) {
         console.log('Could not connect to database');
@@ -47,7 +47,7 @@ redisClient.connect().then(() => {
         store: new RedisStore({
             client: redisClient,
         }),
-        secret: 'Domo Arigato', // Private string used as a seed for hashing/creating unique session keys
+        secret: 'Holy Bullet', // Private string used as a seed for hashing/creating unique session keys
         resave: false,  // Tells session lib to only send session key to db on changes
         saveUninitialized: false,   // Prevents us from saving uninitialized sessionids to db
     }));
