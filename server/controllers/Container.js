@@ -101,6 +101,7 @@ const removeContainer = async (req, res) => {
 module.exports = {
     makerPage,
     makeContainer,
+    getContainer,
     getContainers,
     updateContainerName,
     removeContainer,

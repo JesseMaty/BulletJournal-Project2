@@ -123,9 +123,9 @@ const ContainerList = (props) => {
         return (
             <div key={container._id} className="container" style={{ backgroundColor: container.color }}>
                 <h2>{container.name}</h2>
-                <div className="entries">
-                    <EntryList entries={[]} parentContainer={container._id} reloadEntries={props.reloadContainers} triggerReload={props.triggerReload} />
-                </div>
+
+                <EntryList entries={[]} parentContainer={container._id} reloadEntries={props.reloadContainers} triggerReload={props.triggerReload} />
+
                 <EntryForm parentContainer={container._id} reloadEntries={props.reloadContainers} triggerReload={props.triggerReload}></EntryForm>
                 <button
                     className="removeContainerSubmit"
@@ -216,7 +216,9 @@ const App = () => {
             </div>
             <div id="containers">
                 <h1>Containers</h1>
-                <ContainerList containers={[]} reloadContainers={reloadEntries} triggerReload={() => setReloadEntries(!reloadEntries)} />
+                <section className='content'>
+                    <ContainerList containers={[]} reloadContainers={reloadEntries} triggerReload={() => setReloadEntries(!reloadEntries)} />
+                </section>
                 <div id="makeContainer">
                     <ContainerForm triggerReload={() => setReloadEntries(!reloadEntries)} />
                 </div>

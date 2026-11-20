@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
     height: 100%;
     width: 100%;
     margin: 0;
@@ -7,17 +8,18 @@ html, body {
 }
 
 #content {
-    display:flex;
+    display: flex;
     flex-direction: row;
     justify-content: center;
     padding: 1rem 5rem;
+    height: 80%;
 }
 
 #logo {
     height: 40px;
     width: 40;
     padding-top: 5px;
-    float:left;
+    float: left;
     border-radius: 8px;
 }
 
@@ -40,7 +42,11 @@ nav:nth-child(1) {
     float: left;
 }
 
-.navlink a, .navlink a:link, .navlink a:visited, .navlink a:hover, .navlink a:active {
+.navlink a,
+.navlink a:link,
+.navlink a:visited,
+.navlink a:hover,
+.navlink a:active {
     color: white;
     text-decoration: none;
     padding: 5px;
@@ -54,7 +60,8 @@ nav:nth-child(1) {
     background-color: #66bdff;
 }
 
-.entryForm, .containerForm {
+.entryForm,
+.containerForm {
     margin: 0.5rem;
     padding: 0, 0.25rem;
     display: flex;
@@ -81,7 +88,10 @@ nav:nth-child(1) {
     text-decoration: none;
 }
 
-.makeEntrySubmit:link, .makeDomoSubmit:visited, .makeDomoSubmit:hover, .makeDomoSubmit:active {
+.makeEntrySubmit:link,
+.makeEntrySubmit:visited,
+.makeEntrySubmit:hover,
+.makeEntrySubmit:active {
     color: white;
 }
 
@@ -126,7 +136,10 @@ nav:nth-child(1) {
     text-decoration: none;
 }
 
-.formSubmit:link, .formSubmit:visited, .formSubmit:hover, .formSubmit:active {
+.formSubmit:link,
+.formSubmit:visited,
+.formSubmit:hover,
+.formSubmit:active {
     color: white;
 }
 
@@ -135,14 +148,18 @@ nav:nth-child(1) {
     background-color: #338acc;
 }
 
-#user, #pass, #pass2 {
+#user,
+#pass,
+#pass2 {
     text-align: center;
     font-size: 1.1em;
     width: 180px;
     border-radius: 6px;
 }
 
-#user:focus, #pass:focus, #pass2:focus {
+#user:focus,
+#pass:focus,
+#pass2:focus {
     outline: none;
     box-shadow: 0px 0px 1px 1px #55acee;
 }
@@ -171,7 +188,7 @@ nav:nth-child(1) {
 #speech {
     height: 120px;
     width: 250px;
-    z-index:300;
+    z-index: 300;
 }
 
 #errorMessage {
@@ -182,47 +199,87 @@ nav:nth-child(1) {
 }
 
 .entryList {
-    margin: 2rem;
-    padding: 2rem;
+    display:flex;
+    flex-direction: column;
+    margin: 0rem 0;
+    padding: .5rem 2rem;
+    background-color: rgba(239, 239, 239, 0.724);
+    border: 0.15rem solid black;
+    border-radius: 5px;
+    max-height: 20em;
+    overflow: auto;
+}
+
+.entryList h2 {
+    font-size: 2em;
+    font-weight: bolder;
+    margin: auto .25em auto .33em;
 }
 
 .entry {
     margin: 0.5rem;
     padding: 0.25rem;
     display: flex;
-    flex-direction: row;
+
     justify-content: center;
-    border: .2rem solid black;
-    border-radius: 10px;
-    max-width: 40rem;
+    align-items: center;
+    border: 0.15em solid black;
+    border-radius: 5px;
+    max-width: 40em;
+    transition: transform 0.15s ease;
 }
 
-.entry * {
-    margin-left: 0.25rem;
+.entry:hover{
+    transform:scale(1.02);
 }
 
 .entry button {
-    display:block;
+    display: block;
     margin-left: auto;
 }
 
-.container {
-    margin: 0rem 2rem;
-    padding: .5rem 0rem;
+#inbox {
+    margin: 0 2em;
+    padding: .5em 2em;
     display: flex;
     flex-direction: column;
     justify-content: center;
     border: .2rem solid black;
     border-radius: 10px;
-    max-width:  60rem;
-    width:auto;
+    max-width: 60rem;
+    width: auto;
+}
+
+.container {
+    margin: 1em 2em;
+    padding: .5em 2em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: .2rem solid black;
+    border-radius: 10px;
+    max-width: 60rem;
+    width: auto;
+}
+
+.container h2 {
+    font-size: 1.5em;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 #containers {
-    border: .2rem solid black;
-    border-radius:10px;
+    background-color: #2e3942;
+    border: .15em solid black;
+    border-radius: 10px;
+    padding: 1em;
+    max-height: 80%;
 }
-.entryList {
-    background-color: rgba(255, 255, 255, 0.724);
-    margin:0;
+
+#containers .content{
+    background-color: #757d85;
+    border: 0.15em solid black;
+    border-radius: 5px;;
+    max-height: 20em;
+    overflow: auto;
+
 }
