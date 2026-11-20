@@ -7,14 +7,16 @@ const makerPage = async (req, res) => {
 
 const makeEntry = async (req, res) => {
     if (!req.body.type || !req.body.content || !req.body.color) {
-        return res.status(400).json({ error: 'Type, content, color, and parent are all required!' });
+        return res.status(400).json({ error: 'Type, content, color and color are all required!' });
     }
+
+    let parentID = !req.body.parentContainer ? req.session.account._id : req.body.parentContainer // Default to the account session id
 
     const entryData = {
         type: req.body.type,
         content: req.body.content,
         color: req.body.color,
-        parentContainer: req.session.account._id,
+        parentContainer: parentID,
         owner: req.session.account._id,
     };
 
@@ -40,8 +42,10 @@ const getEntries = async (req, res) => {
 
         // If a parent container is provided, filter through that
         // Otherwise get all entries owned by account
-        //if (req.query.parentContainer) 
-        //    {query.parentContainer = req.query.parentContainer;}
+        if (req.query.parentContainer) 
+           query.parentContainer = req.query.parentContainer;
+        else
+            query.parentContainer = req.session.account._id; // queries for all entry's that don't have a set parentContainer
 
         const docs = await Entry.find(query).select('').lean().exec();
 

@@ -3,14 +3,13 @@ const React = require('react');
 const { useState, useEffect } = React;
 const { createRoot } = require("react-dom/client");
 
-const handleEntry = (e, onEntryAdded) => {
+const handleEntry = (e, onEntryAdded, parentContainer = null) => {
     e.preventDefault();
     helper.hideError();
 
     const type = e.target.querySelector('#entryType').value;
     const content = e.target.querySelector('#entryContent').value;
     const color = e.target.querySelector('#entryColor').value;
-    const parentContainer = e.target.querySelector('#entryParentContainer') ? e.target.querySelector('#entryParentContainer').value : 'inbox';
 
     if (!type || !content || !color) {
         helper.handleError('All fields are required!');
@@ -32,7 +31,7 @@ const handleContainer = (e, onContainerAdded) => {
         return false;
     }
 
-    helper.sendPost(e.target.action, { name, color}, onContainerAdded);
+    helper.sendPost(e.target.action, { name, color }, onContainerAdded);
     return false;
 };
 // Handles the deletion of an entry based on its id
@@ -74,17 +73,21 @@ const ContainerForm = (props) => {
 const EntryForm = (props) => {
     return (
         <form id='entryForm'
-            onSubmit={(e) => handleEntry(e, props.triggerReload)}
+            onSubmit={(e) => {
+                if (props.parentContainer) {
+                    return handleEntry(e, props.triggerReload, props.parentContainer);
+                }
+                handleEntry(e, props.triggerReload);
+            }}
             name="entryForm"
             action="/makeEntry"
             method="POST"
             className="entryForm"
         >
-            <label htmlFor="entryType">Type: </label>
             <select name="entryTypes" id="entryType">
-                <option value="task">Task</option>
-                <option value="event">Event</option>
-                <option value="note">Note</option>
+                <option value="task">•</option>
+                <option value="event">◦</option>
+                <option value="note">⁃</option>
             </select>
             <input id="entryContent" type="text" name="entryContent" placeholder="Enter entry description" />
             <label htmlFor="entryColor">Color: </label>
@@ -95,9 +98,47 @@ const EntryForm = (props) => {
 };
 
 const ContainerList = (props) => {
-    return(
-        <div className="container">
-            <EntryList props></EntryList>
+    // Load containers from server
+    const [containers, setContainers] = useState(props.containers);
+
+    useEffect(() => {
+        const LoadContainersFromServer = async () => {
+            const res = await fetch('/getContainers');
+            const data = await res.json();
+            setContainers(data.containers);
+        };
+        LoadContainersFromServer();
+    }, [props.reloadContainers])
+
+    // If no containers, create default inbox
+    if (containers.length <= 0) {
+        return (
+            <div className="containerList">
+                <h3>Sorry, no containers!</h3>
+            </div>
+        );
+    };
+
+    const containerNodes = containers.map(container => {
+        return (
+            <div key={container._id} className="container" style={{ backgroundColor: container.color }}>
+                <h2>{container.name}</h2>
+                <div className="entries">
+                    <EntryList entries={[]} parentContainer={container._id} reloadEntries={props.reloadContainers} triggerReload={props.triggerReload} />
+                </div>
+                <EntryForm parentContainer={container._id} reloadEntries={props.reloadContainers} triggerReload={props.triggerReload}></EntryForm>
+                <button
+                    className="removeContainerSubmit"
+                    onClick={() => handleDeleteContainer(container._id, props.triggerReload)}
+                >
+                    Remove Container
+                </button>
+            </div>
+        )
+    });
+    return (
+        <div className='containerList'>
+            {containerNodes}
         </div>
     )
 }
@@ -111,7 +152,12 @@ const EntryList = (props) => {
 
     useEffect(() => {
         const loadEntriesFromServer = async () => {
-            const response = await fetch('/getEntries');
+            const searchParams = new URLSearchParams();
+
+            if (props.parentContainer !== undefined)
+                searchParams.append('parentContainer', props.parentContainer);
+
+            const response = await fetch(`/getEntries?${searchParams.toString()}`);
             const data = await response.json();
             setEntries(data.entries);
         };
@@ -127,11 +173,11 @@ const EntryList = (props) => {
     };
 
     const entryNodes = entries.map(entry => {
-        return (
-            <div key={entry._id} className="entry" style={{backgroundColor :entry.color}}>
+        const typeSymbol = entry.type === 'note' ? '⁃' : entry.type === 'event' ? '◦' : '•' // default to closed-bullet (Task)
 
-                <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
-                <h3 className="entryType">{entry.type}: </h3>
+        return (
+            <div key={entry._id} className="entry" style={{ backgroundColor: entry.color }}>
+                <h2 className="entryType">{typeSymbol} </h2>
                 <h3 className="entryContent">{entry.content}</h3>
 
                 <button
@@ -157,22 +203,30 @@ const App = () => {
     const [reloadEntries, setReloadEntries] = useState(false); // Boolean
 
     return (
-        <div>
-            <div id="makeEntry">
-                {/* When rendering entryForm, create triggerReload prop.
+        <div id="content">
+            <div id="inbox" className='container'>
+                <h1>Inbox</h1>
+                <EntryList entries={[]} reloadEntries={reloadEntries} triggerReload={() => setReloadEntries(!reloadEntries)} />
+                <div id="makeEntry">
+                    {/* When rendering entryForm, create triggerReload prop.
                 Function calls setReloadEntry, and passes in negation of
                 reload entries into the entryList */}
-                <EntryForm triggerReload={() => setReloadEntries(!reloadEntries)} />
+                    <EntryForm triggerReload={() => setReloadEntries(!reloadEntries)} />
+                </div>
             </div>
-            <div id="entries">
-                <EntryList entries={[]} reloadEntries={reloadEntries} triggerReload={() => setReloadEntries(!reloadEntries)} />
+            <div id="containers">
+                <h1>Containers</h1>
+                <ContainerList containers={[]} reloadContainers={reloadEntries} triggerReload={() => setReloadEntries(!reloadEntries)} />
+                <div id="makeContainer">
+                    <ContainerForm triggerReload={() => setReloadEntries(!reloadEntries)} />
+                </div>
             </div>
         </div>
     );
 };
 
 const init = () => {
-    const root = createRoot(document.getElementById('content'));
+    const root = createRoot(document.getElementById('app'));
     root.render(<App />);
 };
 

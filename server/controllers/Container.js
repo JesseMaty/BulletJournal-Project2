@@ -34,6 +34,21 @@ const makeContainer = async (req, res) => {
     }
 }
 
+const getContainer = async (req, res) => {
+    if(!req.query.name){
+        return res.status(400).json({error: 'Container name required'})
+    }
+    try{
+        const query = {owner: req.session.account._id, name: req.query.name}
+        const container = await Container.find(query).lean();
+
+        return res.status(200).json(container);
+    } catch(err) {
+        console.log(err);
+        return res.status(500).json({error: 'An error occured getting the container!'})
+    };
+};
+
 const getContainers = async (req, res) => {
     try {
         const query = { owner: req.session.account._id };
@@ -54,7 +69,7 @@ const updateContainerName = async (req, res) => {
 
     try {
         await Entry.update({ id: req.body.id, name: req.body.name });
-        return res.status(204).json({ id: 'Successfully updated Container content' });
+        return res.status(200).json({message: 'Successfully updated container name'});
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: 'Error updating Container content' });
@@ -70,17 +85,13 @@ const removeContainer = async (req, res) => {
 
         try {
             const query = { owner: req.session.account._id, parentContainer: id };
-            const entries = await Entry.find(query).select('').lean().exec();
-
-            entries.forEach(entry => {
-                entries.findByIdAndDelete(entry._id);
-            });
+            await Entry.deleteMany(query);
         } catch (err) {
             console.log(err);
             return res.status(500).json({ error: 'Could not delete the Container\'s Entries' });
         }
 
-        return res.status(204).json({ id: "Successfully deleted Container and it's children" });
+        return res.status(200).json({message: 'Successfully deleted container and it\'s entries'});
     } catch (err) {
         console.log(err);
         return res.status(500).json({ error: 'Could not delete Container.' });

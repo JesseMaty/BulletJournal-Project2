@@ -52,7 +52,7 @@ const EntrySchema = new mongoose.Schema({
 });
 
 // Defines a container object which holds a name,
-// color, list of entries, owner, and createdDate
+// color, owner, and createdDate
 const ContainerSchema = new mongoose.Schema({
     name: {
         type: String,
