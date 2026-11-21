@@ -5,6 +5,8 @@ body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    background-color: #262829;
+    color: rgb(222, 222, 222);
 }
 
 #content {
@@ -62,29 +64,27 @@ nav:nth-child(1) {
 
 .entryForm,
 .containerForm {
+    display:flex;
     margin: 0.5rem;
-    padding: 0, 0.25rem;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+    padding: 0;
     border: .2rem solid black;
     border-radius: 10px;
     max-width: 40rem;
     background-color: rgb(205, 205, 205);
+    justify-content: center;
 }
 
-.entryForm input[type=number],
-.entryForm input[type=text] {
-    margin: 0
+.entryForm input[type=number]{
+    
 }
 
 .makeEntrySubmit {
     transition: background-color 0.4s ease;
     display: inline;
     width: 90px;
-    background-color: #55acee;
+    background-color: #40c654;
     border-radius: 2px;
-    color: white;
+    color: rgb(0, 0, 0);
     text-decoration: none;
 }
 
@@ -97,7 +97,7 @@ nav:nth-child(1) {
 
 .makeEntrySubmit:hover {
     transition: background-color 0.4s ease;
-    background-color: #338acc;
+    background-color: #40a57d;
 }
 
 .mainForm {
@@ -198,22 +198,29 @@ nav:nth-child(1) {
     font-style: italic;
 }
 
-.entryList {
-    display:flex;
+.entryList, .containerList {
+    display: flex;
     flex-direction: column;
     margin: 0rem 0;
     padding: .5rem 2rem;
-    background-color: rgba(239, 239, 239, 0.724);
+    background-color: rgba(232, 232, 232, 0.724);
+    box-shadow: inset 3px 4px 15px black;
     border: 0.15rem solid black;
     border-radius: 5px;
-    max-height: 20em;
+    height: stretch;
     overflow: auto;
 }
-
+.containerList{
+    height: 70%;
+}
 .entryList h2 {
     font-size: 2em;
     font-weight: bolder;
     margin: auto .25em auto .33em;
+}
+
+.entryList h3 {
+    color:black;
 }
 
 .entry {
@@ -221,6 +228,7 @@ nav:nth-child(1) {
     padding: 0.25rem;
     display: flex;
 
+    box-shadow: 3px 6px 7px black;
     justify-content: center;
     align-items: center;
     border: 0.15em solid black;
@@ -229,42 +237,50 @@ nav:nth-child(1) {
     transition: transform 0.15s ease;
 }
 
-.entry:hover{
-    transform:scale(1.02);
+.entry:hover {
+    transform: scale(1.02);
+}
+
+#entryForm {
+    margin: 0.5rem;
+    padding: 0.25rem;
+    display: flex;
+
+    box-shadow: 3px 6px 7px black;
+    justify-content: center;
+    align-items: center;
+    border: 0.15em solid black;
+    border-radius: 5px;
+    max-width: 40em;
+    transition: transform 0.15s ease;
 }
 
 .entry button {
     display: block;
     margin-left: auto;
+    background-color: #00000000;
+    border: none;
+    transition: transform 0.15s ease;
+    font-size: 1.5em
 }
+
+.entry button:hover{
+    color:red;
+    font-weight: bolder;
+    transform: scale(1.2);
+}
+
 
 #inbox {
     margin: 0 2em;
-    padding: .5em 2em;
+    padding: 1em;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    border: .2rem solid black;
+    border: .15rem solid black;
     border-radius: 10px;
     max-width: 60rem;
     width: auto;
-}
-
-.container {
-    margin: 1em 2em;
-    padding: .5em 2em;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border: .2rem solid black;
-    border-radius: 10px;
-    max-width: 60rem;
-    width: auto;
-}
-
-.container h2 {
-    font-size: 1.5em;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    max-height: 90%;
 }
 
 #containers {
@@ -272,14 +288,39 @@ nav:nth-child(1) {
     border: .15em solid black;
     border-radius: 10px;
     padding: 1em;
-    max-height: 80%;
+    max-height: 90%;
 }
 
-#containers .content{
-    background-color: #757d85;
-    border: 0.15em solid black;
-    border-radius: 5px;;
-    max-height: 20em;
-    overflow: auto;
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 1em 2em;
+    padding: .5em 2em;
+    width: 30em;
 
+    box-shadow: 3px 6px 7px black;
+    border: .2rem solid black;
+    border-radius: 10px;
+}
+
+.container h2 {
+    font-size: 1.5em;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+
+.containers h1 {
+    font-size: 2em;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+summary {
+    margin:.5em;
+}
+
+summary h2 {
+    display:inline;
+
+    margin:0;
 }

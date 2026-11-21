@@ -72,7 +72,7 @@ const ContainerForm = (props) => {
 // Form to make an entry
 const EntryForm = (props) => {
     return (
-        <form id='entryForm'
+        <form className='entryForm'
             onSubmit={(e) => {
                 if (props.parentContainer) {
                     return handleEntry(e, props.triggerReload, props.parentContainer);
@@ -82,7 +82,6 @@ const EntryForm = (props) => {
             name="entryForm"
             action="/makeEntry"
             method="POST"
-            className="entryForm"
         >
             <select name="entryTypes" id="entryType">
                 <option value="task">•</option>
@@ -92,7 +91,7 @@ const EntryForm = (props) => {
             <input id="entryContent" type="text" name="entryContent" placeholder="Enter entry description" />
             <label htmlFor="entryColor">Color: </label>
             <input id="entryColor" type="color" name="entryColor" defaultValue="#4bbfa6" />
-            <input className="makeEntrySubmit" type="submit" value="Create Entry" />
+            <input className="makeEntrySubmit" type="submit" value="+" alt='Create Entry' />
         </form>
     )
 };
@@ -120,9 +119,13 @@ const ContainerList = (props) => {
     };
 
     const containerNodes = containers.map(container => {
+        const textColor = helper.contrastColor(container.color);
+
         return (
-            <div key={container._id} className="container" style={{ backgroundColor: container.color }}>
-                <h2>{container.name}</h2>
+            <details key={container._id} className="container" style={{ backgroundColor: container.color }}>
+                <summary>
+                    <h2 style={{ color: textColor }}>{container.name}</h2>
+                </summary>
 
                 <EntryList entries={[]} parentContainer={container._id} reloadEntries={props.reloadContainers} triggerReload={props.triggerReload} />
 
@@ -133,7 +136,8 @@ const ContainerList = (props) => {
                 >
                     Remove Container
                 </button>
-            </div>
+
+            </details>
         )
     });
     return (
@@ -174,19 +178,18 @@ const EntryList = (props) => {
 
     const entryNodes = entries.map(entry => {
         const typeSymbol = entry.type === 'note' ? '⁃' : entry.type === 'event' ? '◦' : '•' // default to closed-bullet (Task)
+        const textColor = helper.contrastColor(entry.color);
 
         return (
             <div key={entry._id} className="entry" style={{ backgroundColor: entry.color }}>
-                <h2 className="entryType">{typeSymbol} </h2>
-                <h3 className="entryContent">{entry.content}</h3>
+                <h2 className="entryType" style={{ color: textColor }}>{typeSymbol} </h2>
+                <h3 className="entryContent" style={{ color: textColor }}>{entry.content}</h3>
 
                 <button
                     className="removeEntrySubmit"
                     onClick={() => handleDeleteEntry(entry._id, props.triggerReload)}
-                >
-                    Remove Entry
-                </button>
-
+                    style={{ color: textColor }}
+                >✖</button>
             </div>
         )
     });
@@ -204,7 +207,7 @@ const App = () => {
 
     return (
         <div id="content">
-            <div id="inbox" className='container'>
+            <div id="inbox">
                 <h1>Inbox</h1>
                 <EntryList entries={[]} reloadEntries={reloadEntries} triggerReload={() => setReloadEntries(!reloadEntries)} />
                 <div id="makeEntry">
@@ -216,9 +219,7 @@ const App = () => {
             </div>
             <div id="containers">
                 <h1>Containers</h1>
-                <section className='content'>
-                    <ContainerList containers={[]} reloadContainers={reloadEntries} triggerReload={() => setReloadEntries(!reloadEntries)} />
-                </section>
+                <ContainerList containers={[]} reloadContainers={reloadEntries} triggerReload={() => setReloadEntries(!reloadEntries)} />
                 <div id="makeContainer">
                     <ContainerForm triggerReload={() => setReloadEntries(!reloadEntries)} />
                 </div>
