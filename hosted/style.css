@@ -67,16 +67,14 @@ nav:nth-child(1) {
     display:flex;
     margin: 0.5rem;
     padding: 0;
-    border: .2rem solid black;
+    border: .1rem solid black;
     border-radius: 10px;
     max-width: 40rem;
     background-color: rgb(205, 205, 205);
     justify-content: center;
 }
 
-.entryForm input[type=number]{
-    
-}
+
 
 .makeEntrySubmit {
     transition: background-color 0.4s ease;
@@ -205,7 +203,7 @@ nav:nth-child(1) {
     padding: .5rem 2rem;
     background-color: rgba(232, 232, 232, 0.724);
     box-shadow: inset 3px 4px 15px black;
-    border: 0.15rem solid black;
+    border: 0.1rem solid black;
     border-radius: 5px;
     height: stretch;
     overflow: auto;
@@ -231,7 +229,7 @@ nav:nth-child(1) {
     box-shadow: 3px 6px 7px black;
     justify-content: center;
     align-items: center;
-    border: 0.15em solid black;
+    border: 0.1em solid black;
     border-radius: 5px;
     max-width: 40em;
     transition: transform 0.15s ease;
@@ -249,7 +247,7 @@ nav:nth-child(1) {
     box-shadow: 3px 6px 7px black;
     justify-content: center;
     align-items: center;
-    border: 0.15em solid black;
+    border: 0.1em solid black;
     border-radius: 5px;
     max-width: 40em;
     transition: transform 0.15s ease;
@@ -276,7 +274,7 @@ nav:nth-child(1) {
     padding: 1em;
     display: flex;
     flex-direction: column;
-    border: .15rem solid black;
+    border: .1rem solid black;
     border-radius: 10px;
     max-width: 60rem;
     width: auto;
@@ -285,7 +283,7 @@ nav:nth-child(1) {
 
 #containers {
     background-color: #2e3942;
-    border: .15em solid black;
+    border: .1em solid black;
     border-radius: 10px;
     padding: 1em;
     max-height: 90%;
@@ -300,7 +298,7 @@ nav:nth-child(1) {
     width: 30em;
 
     box-shadow: 3px 6px 7px black;
-    border: .2rem solid black;
+    border: .1rem solid black;
     border-radius: 10px;
 }
 

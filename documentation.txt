@@ -3,21 +3,63 @@
     is used to track tasks, organize schedules, take notes, and reflect on notes taken.
     Traditionally the system was used for rapid note taking and thought organization for
     people with scattered thoughts or ADHD.
+
 ● What work has been completed for this milestone?
+    I have created a simple maker page, that allows users to view all of their collections, 
+    all of their entries, and all the relevant information. Forms exist for creating entries
+    and collections, and react updates the entries and collections in the server using router
+    and controllers
+
 ● What work is left, and how do you plan to complete it?
-○ What does your timeline/roadmap look like to finish on time?
+    ○ What does your timeline/roadmap look like to finish on time?
+
+    I have to: add a password change feature, add drag and drop for entries using dnd-kit, add ad-space 
+    for a payment model (possibly a premium mode that disables ads), add features for editing existing
+    entries and containers, remove the rest of the domo references, add a description of how the app works,
+    finish styling, and add a "Upcoming Events" component. To finish on time, I will keep chipping away day
+    by day like I have been. If I do even one feature a day, I will have more than enough time.
+
 ● How are you using React?
-○ What components have you made?
-○ What components do you still plan to add?
+    ○ What components have you made?
+    ○ What components do you still plan to add?
+
+    I am using react to create multiple components: Container, Entry, EntryList, ContainerList, ContainerForm, EntryForm.
+    These components are currently used on a "maker" page, with some appearing several times. I want to add a component
+    that displays upcoming events that the user set. 
+
 ● What data are you storing in MongoDB?
-○ What data do you still need to store?
+    ○ What data do you still need to store?
+
+    I am storing "Entry" and "Collection" models, as well as an "Account". Entries need a type(task, event, note), content,
+    color(hex), the id of the parentContainer, and the id of the account owner. Containers need a name, color, and id of the
+    account.
+
 ● What is your profit model?
-○ Have you implemented it yet?
-■ If so, how?
-■ If not, what is your plan to implement it?
+    ○ Have you implemented it yet?
+        ■ If so, how?
+        ■ If not, what is your plan to implement it?
+
+    I am going to add ad spaces that run along either side of the main app page. They will hold placeholder ads. If I have time,
+    I may add a "premium" mode, that disables the ads.
+
 ● Do you have a plan for going above and beyond? If so, what is it?
+    I plan on including the dnd-kit package, which can be used to add dragging and dropping of react components. This will 
+    greatly increase the flow of the app, as entries can be moved by directly dropping them into the container
+
 ● Did you build on DomoMaker or a class example? If so, what did you start from?
+    I built off of DomoMaker.
+
 ● If you used any borrowed code or code fragments, where did you get them from?
 What do the code fragments do? Where are they in your code?
-● Did you use an AI tool for anything? If so, what for? Keep your prompts and what
+    I used code fragments from stackoverflow in helper.js. They are used to calculate the perceived luminance of a color, and 
+    return black or white based on contrast. It is used for calculating the text color of entries and components that have 
+    dynamic colors. 
+      // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+      // https://stackoverflow.com/questions/1855884/determine-font-color-based-on-background-color
+
+● Did you use an AI tool for anything? If so, what for? keep your prompts and what
 it gave you.
+
+Yes, I used chatGPT to research drag-and-drop implementations. Thats how I decided to use dnd-kit. The prompt was:
+'I'm creating a react and express app and I want to add drag-and-drop to allow components to be dragged into
+container components. Research packages or implementations, the use-case is small so it can be lightweight'
